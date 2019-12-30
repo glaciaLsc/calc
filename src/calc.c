@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 /* Boolean data type */
@@ -11,22 +12,34 @@ enum boolean
 
 typedef enum boolean bool;
 
-/* Argument values */
-bool post_order;
-bool pre_order;
-bool verbose;
+/* Argument values (for now, post_order true by default) */
+bool post_order = false;
+bool pre_order = true;
+bool verbose = false;
 
 /* Data structure & operations */
 struct node
 {
-	char* data;
+	char *data;
 	struct node* prev;
 	struct node* next;
 };
 
+/* Debugging */
+void print(struct node* head)
+{
+	printf("Current linked list structure:\n");
+	while (head != NULL)
+	{
+		printf("%s  ", head->data);
+		head = head->next;
+	}
+	printf("\n");
+}
+
 void append(struct node** headref, char *value)
 {
-	struct node* newnode;
+	struct node* newnode = (struct node *)malloc(sizeof(struct node));
 	struct node* current = *headref;
 	
 	newnode->data = value;
@@ -45,8 +58,6 @@ void append(struct node** headref, char *value)
 		current->next = newnode;
 		newnode->prev = current;
 	}
-
-	free(newnode);
 }
 
 void erase(struct node** headref, struct node* subject)
@@ -62,61 +73,55 @@ void erase(struct node** headref, struct node* subject)
 
 	if (subject->prev != NULL)
 		subject->prev->next = subject->next;
-
+	
 	free(subject);
 }
 
 /* Perform operation with two operands and an operator */
-char *operate(struct node** low, struct node** mid, struct node** high)
+int operate(struct node** low, struct node** mid, struct node** high)
 {
 	int firstnum; 
 	int secondnum;
 	int answer;
-	char *answerstring;
 	firstnum = atoi((*low)->data); //Convert strings to integers and perform operation
 	secondnum = atoi((*mid)->data);
 
-	if ((*high)->data == "+")
+	if (strcmp((*high)->data, "+") == 0)
 		answer = firstnum + secondnum;
-	else if ((*high)->data == "-")
+	else if (strcmp((*high)->data, "-") == 0)
 		answer = firstnum - secondnum;
-	else if ((*high)->data == "x")
+	else if (strcmp((*high)->data, "x") == 0)
 		answer = firstnum * secondnum;
-	else if ((*high)->data == "/")
+	else if (strcmp((*high)->data, "/") == 0)
 		answer = firstnum / secondnum;
-	else if ((*high)->data == "%")
+	else if (strcmp((*high)->data, "%") == 0)
 		answer = firstnum % secondnum;
-
-	*answerstring = answer; // Convert answer back to string
-
-	return answerstring;
+	
+	return answer;
 }
 
 /* Currently only performs calculations with post-order notation.
  * TODO: Test post-order capability, implement pre-order function
  */
-char *traverse(struct node* head, char *finalanswer)
+void traverse(struct node* head)
 {
 	struct node* current = head;
 
 	while (current->next != NULL)
 	{
-		if (current->next->data == "+" || current->next->data == "-" || // Perform operation
-		current->next->data == 	"x" || current->next->data == "/" || 
-		current->next->data == "%")
+		if (strcmp(current->next->data, "+") == 0 || strcmp(current->next->data, "-") == 0 || 
+			strcmp(current->next->data, "x") == 0 || strcmp(current->next->data, "/") == 0 || 
+			strcmp(current->next->data, "%") == 0)
 		{
-			finalanswer = operate(&(current->prev), &current, &(current->next));
+			/* Call operate function & cast to current data */
+			sprintf(current->data, "%d", operate(&(current->prev), &current, &(current->next)));
 			erase(&head, current->prev); // Delete previous and next nodes
 			erase(&head, current->next);
-			current->data = finalanswer; // Replace current node data w/ simplification
-
-			finalanswer = traverse(head, finalanswer); // Recursively traverse expression
+			traverse(head); // Recursively traverse expression
 		}
 		else
 			current = current->next;
 	}
-
-	return finalanswer;
 }
 
 /* Print functions */
@@ -129,9 +134,37 @@ void helpdisplay()
 	printf("-v,  --verbose         verbose output\n");
 }
 
+/* Check arguments */
+void checkargs(int argc, char* argv[])
+{
+	if (argc < 3)
+	{
+		helpdisplay();
+		exit(1);
+	}
+	
+	for (int i=0; i < argc; i++)
+	{
+		if (argv[i] == "-Po" || argv[i] == "--post-order")
+			post_order = true;
+		else if (argv[i] == "-Pr" || argv[i] == "--pre-order")
+			pre_order = true;
+		else if (argv[i] == "-v" || argv[i] == "--verbose")
+			verbose = true;
+	}
+}
+
 int main(int argc, char* argv[])
 {
-	helpdisplay();
+	checkargs(argc, argv);
+
+	struct node* head = NULL;
+
+	for (int i=1; i < argc; i++)
+		append(&head, argv[i]);
+
+	traverse(head);
+	printf("%s\n", head->next->data);
 
 	return 0;
 }
