@@ -21,7 +21,6 @@ bool verbose = false;
 struct node
 {
 	char *data;
-	struct node* prev;
 	struct node* next;
 };
 
@@ -31,7 +30,10 @@ void print(struct node* head)
 	printf("Current linked list structure:\n");
 	while (head != NULL)
 	{
-		printf("%s  ", head->data);
+		if (head->data == " " || head->data == "")
+			printf("void ", head->data);
+		else
+			printf("%s  ", head->data);
 		head = head->next;
 	}
 	printf("\n");
@@ -46,35 +48,41 @@ void append(struct node** headref, char *value)
 	newnode->next = NULL;
 
 	if (*headref == NULL)
-	{
-		newnode->prev = NULL;
 		*headref = newnode;
-	}
 	else
 	{
 		while (current->next != NULL)
 			current = current->next;
 
 		current->next = newnode;
-		newnode->prev = current;
 	}
 }
 
-void erase(struct node** headref, struct node* subject)
+void erase(struct node* head, struct node* subject)
 {
-	if (*headref == NULL || subject == NULL)
+	if (head == subject)
+	{
+		if (head->next == NULL) return;
+
+		head->data = head->next->data;
+		subject = head->next;
+		head->next = head->next->next;
+
+		free(subject);
 		return;
-
-	if (*headref == subject)
-		*headref = subject->next;
+	}
 	
-	if (subject->next != NULL)
-		subject->next->prev = subject->prev;
+	struct node* prev = head;
 
-	if (subject->prev != NULL)
-		subject->prev->next = subject->next;
-	
+	while (prev->next != NULL && prev->next != subject)
+		prev = prev->next;
+
+	if (prev->next == NULL) return;
+
+	prev->next = prev->next->next;
+
 	free(subject);
+	return;
 }
 
 /* Perform operation with two operands and an operator */
@@ -97,27 +105,39 @@ int operate(struct node** low, struct node** mid, struct node** high)
 	else if (strcmp((*high)->data, "%") == 0)
 		answer = firstnum % secondnum;
 	
+	printf("Answer: %d\n", answer);	
 	return answer;
 }
 
 /* Currently only performs calculations with post-order notation.
  * TODO: Test post-order capability, implement pre-order function
  */
-void traverse(struct node* head)
+void traversepostorder(struct node* head)
 {
-	struct node* current = head;
+	if (head == NULL || head->next == NULL || head->next->next == NULL) return;
 
-	while (current->next != NULL)
+	struct node* current = head;
+	printf("Current node value(should be head): %s\n", current->data);
+
+	while (current != NULL && current->next != NULL && current->next->next != NULL)
 	{
-		if (strcmp(current->next->data, "+") == 0 || strcmp(current->next->data, "-") == 0 || 
-			strcmp(current->next->data, "x") == 0 || strcmp(current->next->data, "/") == 0 || 
-			strcmp(current->next->data, "%") == 0)
+		printf("In while loop...\n");
+		if (strcmp(current->next->next->data, "+") == 0 || 
+			strcmp(current->next->next->data, "-") == 0 || 
+			strcmp(current->next->next->data, "x") == 0 || 
+			strcmp(current->next->next->data, "/") == 0 || 
+			strcmp(current->next->next->data, "%") == 0)
 		{
-			/* Call operate function & cast to current data */
-			sprintf(current->data, "%d", operate(&(current->prev), &current, &(current->next)));
-			erase(&head, current->prev); // Delete previous and next nodes
-			erase(&head, current->next);
-			traverse(head); // Recursively traverse expression
+			printf("In if block...\n");
+			sprintf(current->data, "%d", operate(&current, &(current->next), &(current->next->next))); // Call operate function & cast to current data
+			printf("Conducted integer to string conversion...\n");
+			erase(head, current->next->next); // Delete two next nodes
+			printf("Deleted next next...\n");
+			print(head);
+			erase(head, current->next);
+			printf("Deleted next...\n");
+			print(head);
+			traversepostorder(head);
 		}
 		else
 			current = current->next;
@@ -159,12 +179,14 @@ int main(int argc, char* argv[])
 	checkargs(argc, argv);
 
 	struct node* head = NULL;
+	int i;
 
-	for (int i=1; i < argc; i++)
+	for (i=1; i < argc; i++)
 		append(&head, argv[i]);
-
-	traverse(head);
-	printf("%s\n", head->next->data);
+	
+	print(head);
+	traversepostorder(head);
+	print(head);
 
 	return 0;
 }
