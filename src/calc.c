@@ -105,7 +105,6 @@ int operate(struct node** low, struct node** mid, struct node** high)
 	else if (strcmp((*high)->data, "%") == 0)
 		answer = firstnum % secondnum;
 	
-	printf("Answer: %d\n", answer);	
 	return answer;
 }
 
@@ -117,27 +116,19 @@ void traversepostorder(struct node* head)
 	if (head == NULL || head->next == NULL || head->next->next == NULL) return;
 
 	struct node* current = head;
-	printf("Current node value(should be head): %s\n", current->data);
 
 	while (current != NULL && current->next != NULL && current->next->next != NULL)
 	{
-		printf("In while loop...\n");
 		if (strcmp(current->next->next->data, "+") == 0 || 
 			strcmp(current->next->next->data, "-") == 0 || 
 			strcmp(current->next->next->data, "x") == 0 || 
 			strcmp(current->next->next->data, "/") == 0 || 
 			strcmp(current->next->next->data, "%") == 0)
 		{
-			printf("In if block...\n");
 			sprintf(current->data, "%d", operate(&current, &(current->next), &(current->next->next))); // Call operate function & cast to current data
-			printf("Conducted integer to string conversion...\n");
 			erase(head, current->next->next); // Delete two next nodes
-			printf("Deleted next next...\n");
-			print(head);
 			erase(head, current->next);
-			printf("Deleted next...\n");
-			print(head);
-			traversepostorder(head);
+			traversepostorder(head); // Recursively traverse linked list
 		}
 		else
 			current = current->next;
@@ -179,9 +170,8 @@ int main(int argc, char* argv[])
 	checkargs(argc, argv);
 
 	struct node* head = NULL;
-	int i;
 
-	for (i=1; i < argc; i++)
+	for (int i=1; i < argc; i++)
 		append(&head, argv[i]);
 	
 	print(head);
