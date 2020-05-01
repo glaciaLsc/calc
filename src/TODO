@@ -1,6 +1,5 @@
 # Todo
-
-- Condense precalc and postcalc functionality into a single C file
+- Implement verbose versions of pre- and post-order functions
 - Implement in-order calculations
 - Construct makefile and/or PKGBUILD
 - Make Readme and a pretty man page
