@@ -6,6 +6,7 @@
 /* Boolean data type */
 typedef enum {false, true} bool;
 
+// Flags
 bool post_order = false;
 bool pre_order = false;
 bool verbose = false;
