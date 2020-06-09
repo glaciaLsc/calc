@@ -85,7 +85,9 @@ int operate(struct node** low, struct node** mid, struct node** high)
 	int firstnum; 
 	int secondnum;
 	int answer;
-	firstnum = atoi((*low)->data); //Convert strings to integers and perform operation
+
+    //Convert strings to integers and perform operation
+	firstnum = atoi((*low)->data); 
 	secondnum = atoi((*mid)->data);
 
 	if (strcmp((*high)->data, "+") == 0)
@@ -116,11 +118,15 @@ void traversepostorder(struct node* head)
 			strcmp(current->next->next->data, "/") == 0 || 
 			strcmp(current->next->next->data, "%") == 0)
 		{
-			sprintf(current->data, "%d", operate(&current, &(current->next), &(current->next->next))); // Call operate function & cast to current data
-			erase(head, current->next->next); // Delete next two nodes
-			erase(head, current->next);
+			// Call operate function & cast to current data
+			sprintf(current->data, "%d", operate(&current, &(current->next), &(current->next->next)));
 
-			traversepostorder(head); // Recursively traverse linked list
+			// Delete next two nodes
+			erase(head, current->next->next); 
+			erase(head, current->next);
+			
+			// Recursively traverse linked list
+			traversepostorder(head); 
 		}
 		else
 			current = current->next;
@@ -151,11 +157,15 @@ void traversepreorder(struct node* head)
 			strcmp(current->next->next->data, "/") != 0 && 
 			strcmp(current->next->next->data, "%") != 0))
 		{
-			sprintf(current->data, "%d", operate(&(current->next), &(current->next->next), &current)); // Call operate function & cast to current data
-			erase(head, current->next->next); // Delete next two nodes
+			// Call operate function & cast to current data
+			sprintf(current->data, "%d", operate(&(current->next), &(current->next->next), &current));
+
+			// Delete next two nodes
+			erase(head, current->next->next); 
 			erase(head, current->next);
 
-			traversepreorder(head); // Recursively traverse linked list
+			// Recursively traverse linked list
+			traversepreorder(head); 
 		}
 		else
 			current = current->next;
