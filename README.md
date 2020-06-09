@@ -9,5 +9,5 @@ having far more complexity than what might be required for the average user.
 mathematical operations of varying complexity without the need for a large
 program installation, and without entering an execution environment.
 
-## Features (coming soon)
-+ Supports infix, prefix and postfix notation
+## Features
++ Supports prefix and postfix notation
