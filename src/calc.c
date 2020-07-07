@@ -11,6 +11,7 @@ bool post_order = false;
 bool pre_order = false;
 bool verbose = false;
 
+
 /* Data structure & operations */
 struct node
 {
@@ -18,20 +19,6 @@ struct node
 	struct node* next;
 };
 
-/* Debugging */
-void print(struct node* head)
-{
-	printf("Current linked list structure:\n");
-	while (head != NULL)
-	{
-		if (head->data == " " || head->data == "")
-			printf("void ", head->data);
-		else
-			printf("%s  ", head->data);
-		head = head->next;
-	}
-	printf("\n");
-}
 
 void append(struct node** headref, char *value)
 {
@@ -213,6 +200,21 @@ int checkargs(int argc, char* argv[])
 	}
 
 	return flagcount;
+}
+
+/* Debugging */
+void print(struct node* head)
+{
+	printf("Current linked list structure:\n");
+	while (head != NULL)
+	{
+		if (head->data == " " || head->data == "")
+			printf("void ", head->data);
+		else
+			printf("%s  ", head->data);
+		head = head->next;
+	}
+	printf("\n");
 }
 
 /* 
