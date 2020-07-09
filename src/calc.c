@@ -11,14 +11,12 @@ bool post_order = false;
 bool pre_order = false;
 bool verbose = false;
 
-
 /* Data structure & operations */
 struct node
 {
 	char *data;
 	struct node* next;
 };
-
 
 void append(struct node** headref, char *value)
 {
@@ -160,27 +158,46 @@ void traversepreorder(struct node* head)
 }
 
 /* Print functions */
-void helpdisplay()
+void printhelpdisplay()
 {
-	printf("Usage: calc [OPTION]... [DATA]...\n");
-	printf("Perform basic calculations on the command line. In-order input accepted by default.\n\n");
+	printf("Usage: calc [OPTION]... [DATA]...\n\n");
+	printf("Options:\n");
 	printf("-Po, --post-order      accept post-order input\n");
 	printf("-Pr, --pre-order       accept pre-order input\n");
 	printf("-v,  --verbose         verbose output\n");
 }
 
+void printerrordisplay()
+{
+	printf("ERROR: Improper syntax\n\n");
+	printf("Type -h or --help for a list of available commands\n");
+}
+
+/*
+ * TODO: Make argument checking more efficient
+ * */
 int checkargs(int argc, char* argv[])
 {
 	// Check for minimum arg count
-	if (argc < 3)
+	if (argc == 1)
 	{
-		helpdisplay();
-		exit(0);
+		printerrordisplay();
+		exit(-1);
+	}
+	else if (argc == 2)
+	{
+		if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
+		{
+			printhelpdisplay();
+			exit(0);
+		}
+		printerrordisplay();
+		exit(-1);
 	}
 
 	int flagcount = 1;
 	
-	for (int i=0; i < argc; i++)
+	for (int i=1; i < argc; i++)
 	{
 		if (strcmp(argv[i], "-Po") == 0 || strcmp(argv[i], "--post-order") == 0)
 		{
@@ -231,7 +248,8 @@ int main(int argc, char* argv[])
 	// Add non-flag args to linked list
 	for (int i=flagcount; i < argc; i++) 
 		append(&head, argv[i]);
-
+	
+	// Perform calculation
 	if (post_order == true)
 	{
 		traversepostorder(head);
