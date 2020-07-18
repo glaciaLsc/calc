@@ -6,18 +6,19 @@
 /* Boolean data type */
 typedef enum {false, true} bool;
 
-// Flags
-bool post_order = false;
-bool pre_order = false;
-bool verbose = false;
-
-/* Data structure & operations */
+/* Node data structure */
 struct node
 {
 	char *data;
 	struct node* next;
 };
 
+// Flags
+bool post_order = false;
+bool pre_order = false;
+bool verbose = false;
+
+/* Linked list operations */
 void append(struct node** headref, char *value)
 {
 	struct node* newnode = (struct node *)malloc(sizeof(struct node));
