@@ -11,3 +11,10 @@ program installation, and without entering an execution environment.
 
 ## Features
 + Supports prefix and postfix notation
+
+## Coming soon...
++ Support for infix expressions
++ Exponentiation and trigonometric functionality, all provided by the good ol'
+  standard libc
++ Linked list arithmetic, allowing for input / output numbers that exceed
+  C-primitive size constraints
