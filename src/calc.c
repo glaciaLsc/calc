@@ -22,8 +22,7 @@ along with this program.  If not, see
 typedef enum {false, true} bool;
 
 /* Node data structure */
-struct node
-{
+struct node {
 	char *data;
 	struct node* next;
 };
@@ -34,7 +33,8 @@ bool pre_order = false;
 bool verbose = false;
 
 /* Linked list operations */
-void append(struct node** headref, char *value)
+void
+append(struct node** headref, char *value)
 {
 	struct node* newnode = (struct node *)malloc(sizeof(struct node));
 	struct node* current = *headref;
@@ -44,8 +44,7 @@ void append(struct node** headref, char *value)
 
 	if (*headref == NULL)
 		*headref = newnode;
-	else
-	{
+	else {
 		while (current->next != NULL)
 			current = current->next;
 
@@ -53,10 +52,10 @@ void append(struct node** headref, char *value)
 	}
 }
 
-void erase(struct node* head, struct node* subject)
+void
+erase(struct node* head, struct node* subject)
 {
-	if (head == subject)
-	{
+	if (head == subject) {
 		if (head->next == NULL) return;
 
 		head->data = head->next->data;
@@ -81,7 +80,8 @@ void erase(struct node* head, struct node* subject)
 }
 
 /* Perform operation with two operands and an operator */
-int operate(struct node** low, struct node** mid, struct node** high)
+int 
+operate(struct node** low, struct node** mid, struct node** high)
 {
 	int firstnum; 
 	int secondnum;
@@ -105,7 +105,8 @@ int operate(struct node** low, struct node** mid, struct node** high)
 	return answer;
 }
 
-void traversepostorder(struct node* head)
+void 
+traversepostorder(struct node* head)
 {
 	if (head == NULL || head->next == NULL || head->next->next == NULL) return;
 
@@ -134,7 +135,8 @@ void traversepostorder(struct node* head)
 	}
 }
 
-void traversepreorder(struct node* head)
+void
+traversepreorder(struct node* head)
 {
 	if (head == NULL || head->next == NULL || head->next->next == NULL) return;
 
@@ -174,7 +176,8 @@ void traversepreorder(struct node* head)
 }
 
 /* Print functions */
-void printhelpdisplay()
+void
+printhelpdisplay()
 {
 	printf("Usage: calc [OPTION]... [DATA]...\n\n");
 	printf("Options:\n");
@@ -183,7 +186,8 @@ void printhelpdisplay()
 	printf("-v,  --verbose         verbose output\n");
 }
 
-void printerrordisplay()
+void
+printerrordisplay()
 {
 	printf("ERROR: Improper syntax\n\n");
 	printf("Type -h or --help for a list of available commands\n");
@@ -192,18 +196,16 @@ void printerrordisplay()
 /*
  * TODO: Make argument checking more efficient
  * */
-int checkargs(int argc, char* argv[])
+int
+checkargs(int argc, char* argv[])
 {
 	// Check for minimum arg count
-	if (argc == 1)
-	{
+	if (argc == 1) {
 		printerrordisplay();
 		exit(-1);
 	}
-	else if (argc == 2)
-	{
-		if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
-		{
+	else if (argc == 2) {
+		if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
 			printhelpdisplay();
 			exit(0);
 		}
@@ -213,8 +215,7 @@ int checkargs(int argc, char* argv[])
 
 	int flagcount = 1;
 	
-	for (int i=1; i < argc; i++)
-	{
+	for (int i=1; i < argc; i++) {
 		if (strcmp(argv[i], "-Po") == 0 || strcmp(argv[i], "--post-order") == 0)
 		{
 			post_order = true;
@@ -236,15 +237,15 @@ int checkargs(int argc, char* argv[])
 }
 
 /* Debugging */
-void print(struct node* head)
+void
+print(struct node* head)
 {
 	printf("Current linked list structure:\n");
-	while (head != NULL)
-	{
+	while (head != NULL) {
 		if (head->data == " " || head->data == "")
 			printf("void ", head->data);
 		else
-			printf("%s  ", head->data);
+			printf("%s ", head->data);
 		head = head->next;
 	}
 	printf("\n");
@@ -254,7 +255,8 @@ void print(struct node* head)
  * TODO: Implement verbose versions of pre-and post-order functions;
  *       implement in-order function
  */
-int main(int argc, char* argv[])
+int
+main(int argc, char* argv[])
 {
 	// Check arguments for validity and flag count
 	int flagcount = checkargs(argc, argv);
@@ -266,13 +268,11 @@ int main(int argc, char* argv[])
 		append(&head, argv[i]);
 	
 	// Perform calculation
-	if (post_order == true)
-	{
+	if (post_order == true) {
 		traversepostorder(head);
 		printf("%s\n", head->data);
 	} 
-	else if (pre_order == true)
-	{
+	else if (pre_order == true) {
 		traversepreorder(head);
 		printf("%s\n", head->data);
 	}
